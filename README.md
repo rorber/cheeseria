@@ -4,6 +4,8 @@ This app lists products and allows a user to add them to an order.
 
 https://d74rqe477cov7.cloudfront.net
 
+<img width="1182" alt="image" src="https://github.com/rorber/cheeseria/assets/19149315/0ad64663-0fe3-4ff1-af59-47b5f8038ae7">
+
 ## Installation and running locally
 
 1. Install pnpm
