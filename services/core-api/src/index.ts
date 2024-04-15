@@ -6,6 +6,12 @@ import { renderTrpcPanel } from 'trpc-panel';
 import { cheeseRouter } from './routes/cheese/cheese.controller';
 import { orderRouter } from './routes/order/order.controller';
 import { createContext, publicProcedure, router } from './trpc';
+import { writeFileSync } from 'fs';
+import { join } from 'path';
+
+if (safeGetEnvVar('STAGE', '') === `dev`) {
+  writeFileSync(join(`/tmp`, `orders.json`), `[]`);
+}
 
 export type AppRouter = typeof appRouter;
 
