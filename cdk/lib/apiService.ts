@@ -35,8 +35,7 @@ export class APIService extends Construct {
     const lambdaFn = new LambdaFunction(this, `${this.resourceNamePrefix}1`, {
       code: Code.fromAsset(servicePath, {
         exclude: readdirSync(servicePath)
-          .filter((f) => ![`package.json`, `dist`, `src`, `types`].includes(f))
-          .concat(join(`.`, `node_modules`, `**`))
+          .filter((f) => ![`package.json`, `node_modules`, `dist`, `src`, `types`].includes(f))
           .concat(join(`.`, `src`, `**`))
           .concat(join(`.`, `types`, `**`)),
         // Includes the node_modules/.bin directory otherwise the Lambda cant find the entry point
