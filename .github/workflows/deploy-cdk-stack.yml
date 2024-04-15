@@ -54,7 +54,7 @@ jobs:
         working-directory: ./node_modules
 
       - name: Remove binaries of front-end apps that are not required on the server
-        run: rm -rf acorn autoprefixer browserslist cssesc detective eslint jsesc json5 loose-envify nanoid node-pre-gyp playwright playwright-core prisma prisma2 resolve tailwind tailwindcss tsc tsserver 'ts-node'* ts-script update-browserslist-db
+        run: rm -rf acorn autoprefixer browserslist cssesc detective eslint jsesc json5 loose-envify nanoid node-pre-gyp playwright playwright-core prisma prisma2 resolve tailwind tailwindcss tsc tsserver 'ts-node'* ts-script update-browserslist-db yaml
         shell: bash
         working-directory: ./node_modules/.bin
 
