@@ -32,7 +32,7 @@ export class APIService extends Construct {
   private addLambda(): Alias {
     const servicePath = join(`..`, `services`, `core-api`);
 
-    const lambdaFn = new LambdaFunction(this, this.resourceNamePrefix, {
+    const lambdaFn = new LambdaFunction(this, `${this.resourceNamePrefix}1`, {
       code: Code.fromAsset(servicePath, {
         exclude: readdirSync(servicePath)
           .filter((f) => ![`package.json`, `dist`, `src`, `types`].includes(f))
