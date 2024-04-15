@@ -1,0 +1,41 @@
+service: cheeseria-api
+frameworkVersion: '3'
+
+custom:
+  serverless-offline-ssm:
+    stages:
+      - offline
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  timeout: 60
+  region: us-east-2
+  httpApi:
+    cors:
+      allowedOrigins:
+        - '*'
+      allowedHeaders:
+        - Authorization
+        - Baggage
+        - Content-Type
+        - Sentry-Trace
+        - X-Amz-Date
+        - X-Amz-Security-Token
+        - X-Api-Key
+  vpc:
+
+functions:
+  rest-api:
+    timeout: 60
+    handler: dist/index.handler
+    environment:
+      STAGE: local
+    events:
+      - http:
+          path: /{proxy+}
+          method: any
+
+plugins:
+  - serverless-offline-ssm
+  - serverless-offline

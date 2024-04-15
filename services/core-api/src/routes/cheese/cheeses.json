@@ -1,0 +1,31 @@
+[{
+  "colour": "Sunburst Gold",
+  "id": "a2c01a49-62cd-4e62-bd21-b7b7f6e226e0",
+  "imageName": "american.jpeg",
+  "name": "American",
+  "pricePerKg": 15
+}, {
+  "colour": "Sunset Amber",
+  "id": "3f6b04cf-1a2d-4424-b8a0-536932c3088d",
+  "imageName": "cheddar.webp",
+  "name": "Cheddar",
+  "pricePerKg": 10
+}, {
+  "colour": "Creamy Ivory",
+  "id": "e41e8315-4e3c-4890-ae52-b70b3a3056a3",
+  "imageName": "mozzarella.jpeg",
+  "name": "Mozzarella",
+  "pricePerKg": 12
+}, {
+  "colour": "Antique Ivory",
+  "id": "0b2a3ab3-cd61-4a11-ba39-2b00a7d5988f",
+  "imageName": "parmesan.jpeg",
+  "name": "Parmesan",
+  "pricePerKg": 20
+}, {
+  "colour": "Tuscan Ivory",
+  "id": "b720c672-171f-4d8b-83ed-1630d8e1f2d3",
+  "imageName": "pecorino.webp",
+  "name": "Pecorino",
+  "pricePerKg": 25
+}]

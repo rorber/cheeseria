@@ -1,0 +1,66 @@
+name: Deploy CDK Stack
+
+on:
+  workflow_dispatch:
+
+env:
+  VITE_API_URL: https://0pvs4emdil.execute-api.ap-southeast-2.amazonaws.com/dev 
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          cache: pnpm
+          node-version: 20.x
+
+      - name: Configure aws credentials
+        uses: aws-actions/configure-aws-credentials@master
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-southeast-2
+
+      - name: Install workspace dependencies
+        run: pnpm install --node-linker=hoisted
+
+      - name: Build
+        uses: nick-fields/retry@v2
+        with:
+          timeout_minutes: 8
+          max_attempts: 3
+          retry_on: error
+          command: pnpm build:ci
+
+      - name: Remove root node_modules because we need to exclude prod dependencies and devDependencies don't get overwritten
+        run: rm -rf node_modules
+
+      - name: Install dependencies of all workspaces. We currently can't isolate installation of a given workspace's dependencies
+        run: pnpm install --prod --force --node-linker=hoisted
+
+      - run: rsync -a --delete node_modules services/core-api/
+
+      - name: Install CDK
+        run: npm i
+        working-directory: ./cdk
+
+      - name: Diff
+        run: npm run cdk -- diff -c config=dev
+        working-directory: ./cdk
+
+      - name: Deploy
+        run: npm run cdk -- deploy -c config=dev # --require-approval never # --verbose
+        working-directory: ./cdk
+
+      - name: Invalidate Cloudfront
+        run: aws cloudfront create-invalidation --distribution-id E3H02A0LCRSCM9 --paths "/*"
