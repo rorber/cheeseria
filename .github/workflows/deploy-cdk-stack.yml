@@ -48,6 +48,16 @@ jobs:
       - name: Install dependencies of all workspaces. We currently can't isolate installation of a given workspace's dependencies
         run: pnpm install --prod --force --node-linker=hoisted
 
+    - name: Remove dependencies of front-end apps that are not required on the server
+      run: rm -rf @ampproject @auth0 @aws-sdk @emotion @googlemaps @jridgewell @mapbox @nodelib @playwright @popperjs @react-google-maps @reduxjs @remix-run @storybook @tanstack @types @xobotyi 'acorn'* anymatch arg autoprefixer babel-plugin-macros babel-runtime base64-js binary-extensions braces browserslist callsites camelcase-css caniuse-lite canvas 'css'* chalk chokidar classnames convert-source-map copy-to-clipboard core-js-pure cosmiconfig decompress-response defined detective didyoumean diff dlv electron-to-chromium error-ex error-stack-parser escalade escape-string-regexp fast-deep-equal fast-glob fast-loops fast-shallow-equal fastest-stable-stringify fastq fill-range find-root 'focus-trap'* fraction.js fsevents gensync glob-parent globals has-flag hoist-non-react-statics hyphenate-style-name immer import-fresh inline-style-prefixer invariant is-binary-path is-core-module is-extglob is-glob is-number js-cookie js-tokens jsesc json-parse-even-better-errors json5 kdbush launchdarkly-js-client-sdk launchdarkly-js-sdk-common launchdarkly-react-client-sdk lilconfig lines-and-columns loose-envify lottie-web make-dir math-random mdn-data merge2 micromatch mimic-response minimist nan nano-css nanoid normalize-path normalize-range object-assign object-hash parent-module parse-json path-parse path-type path2d-polyfill pdfjs-dist picocolors picomatch pify playwright playwright-core postcss 'postcss'* prisma prop-types queue-microtask quick-lru 'react'* read-cache readdirp 'redux'* reselect resize-observer-polyfill resolve resolve-from reusify rtl-css-js run-parallel scheduler screenfull set-harmonic-interval shallowequal signal-exit simple-concat simple-get simple-update-in source-map source-map-js stack-generator stackframe 'stacktrace'* stylis supercluster supports-color supports-preserve-symlinks-flag tabbable tailwindcss throttle-debounce to-fast-properties to-regex-range toggle-selection ts-easing ts-node typescript update-browserslist-db use-sync-external-store warning xtend yaml
+      shell: bash
+      working-directory: ./node_modules
+
+    - name: Remove binaries of front-end apps that are not required on the server
+      run: rm -rf acorn autoprefixer browserslist cssesc detective eslint jsesc json5 loose-envify nanoid node-pre-gyp playwright playwright-core prisma prisma2 resolve tailwind tailwindcss tsc tsserver 'ts-node'* ts-script update-browserslist-db
+      shell: bash
+      working-directory: ./node_modules/.bin
+
       - run: rsync -a --delete node_modules services/core-api/
 
       - name: Install CDK
