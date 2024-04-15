@@ -49,7 +49,7 @@ export class APIService extends Construct {
       environment: {
         STAGE: this.node.tryGetContext(`config`),
       },
-      functionName: this.resourceNamePrefix,
+      functionName: `${this.resourceNamePrefix}1`,
       handler: `dist/services/core-api/src/index.handler`,
       memorySize: 1024,
       reservedConcurrentExecutions: 2,
