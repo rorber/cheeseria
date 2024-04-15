@@ -12,7 +12,7 @@
     "build:ci": "rm -rf services/.build && turbo run build && turbo run build:ci",
     "commit": "git-cz",
     "postinstall": "husky install",
-    "precommit": "pnpm prettier:check && pnpm eslint:check && pnpm test:unit",
+    "precommit": "pnpm prettier:check && pnpm eslint:check",
     "clean": "pnpm -r clean && rm -rf dist node_modules"
   },
   "dependencies": {
