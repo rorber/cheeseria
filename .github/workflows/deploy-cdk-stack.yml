@@ -58,6 +58,11 @@ jobs:
         shell: bash
         working-directory: ./node_modules/.bin
 
+      - uses: actions/upload-artifact@v4
+        with:
+          name: api-node-modules
+          path: services/core-api/**
+
       - run: rsync -a --delete node_modules services/core-api/
 
       - name: Install CDK
