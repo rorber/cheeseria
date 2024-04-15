@@ -2,7 +2,7 @@ import { Duration, RemovalPolicy, StackProps, SymlinkFollowMode } from 'aws-cdk-
 import { Cors, LambdaRestApi, RestApi } from 'aws-cdk-lib/aws-apigateway';
 import { Vpc } from 'aws-cdk-lib/aws-ec2';
 import { ServicePrincipal } from 'aws-cdk-lib/aws-iam';
-import { Alias, Code, Function as LambdaFunction, Runtime } from 'aws-cdk-lib/aws-lambda';
+import { Alias, DockerImageCode, DockerImageFunction } from 'aws-cdk-lib/aws-lambda';
 import { Construct } from 'constructs';
 import { readdirSync } from 'fs';
 import { join } from 'path';
@@ -32,8 +32,10 @@ export class APIService extends Construct {
   private addLambda(): Alias {
     const servicePath = join(`..`, `services`, `core-api`);
 
-    const lambdaFn = new LambdaFunction(this, `${this.resourceNamePrefix}1`, {
-      code: Code.fromAsset(servicePath, {
+    const lambdaFn = new DockerImageFunction(this, this.resourceNamePrefix, {
+      code: DockerImageCode.fromImageAsset(servicePath, {
+        cmd: [`dist/services/core-api/src/index.handler`],
+        entrypoint: [`/lambda-entrypoint.sh`],
         exclude: readdirSync(servicePath)
           .filter((f) => ![`package.json`, `node_modules`, `dist`, `src`, `types`].includes(f))
           .concat(join(`.`, `src`, `**`))
@@ -48,49 +50,20 @@ export class APIService extends Construct {
       environment: {
         STAGE: this.node.tryGetContext(`config`),
       },
-      functionName: `${this.resourceNamePrefix}1`,
-      handler: `dist/services/core-api/src/index.handler`,
+      functionName: this.resourceNamePrefix,
       memorySize: 1024,
-      reservedConcurrentExecutions: 2,
+      reservedConcurrentExecutions: 5,
       retryAttempts: 0,
-      runtime: Runtime.NODEJS_20_X,
       timeout: Duration.seconds(29),
       vpc: this.props.vpc,
       vpcSubnets: { subnets: this.props.vpc.privateSubnets },
     });
 
-    // const lambdaFn = new DockerImageFunction(this, this.resourceNamePrefix, {
-    //   code: DockerImageCode.fromImageAsset(servicePath, {
-    //     cmd: [`dist/services/core-api/src/index.handler`],
-    //     entrypoint: [`/lambda-entrypoint.sh`],
-    //     exclude: readdirSync(servicePath)
-    //       .filter((f) => ![`package.json`, `node_modules`, `dist`, `src`, `types`].includes(f))
-    //       .concat(join(`.`, `src`, `**`))
-    //       .concat(join(`.`, `types`, `**`)),
-    //     // Includes the node_modules/.bin directory otherwise the Lambda cant find the entry point
-    //     followSymlinks: SymlinkFollowMode.ALWAYS,
-    //   }),
-    //   currentVersionOptions: {
-    //     removalPolicy: RemovalPolicy.RETAIN,
-    //   },
-    //   description: `Cheeseria API deployed via CDK`,
-    //   environment: {
-    //     STAGE: this.node.tryGetContext(`config`),
-    //   },
-    //   functionName: this.resourceNamePrefix,
-    //   memorySize: 1024,
-    //   reservedConcurrentExecutions: 5,
-    //   retryAttempts: 0,
-    //   timeout: Duration.seconds(29),
-    //   vpc: this.props.vpc,
-    //   vpcSubnets: { subnets: this.props.vpc.privateSubnets },
-    // });
-
     // If this isn't here, it doesnt create a new version
     lambdaFn.currentVersion;
 
     const alias = lambdaFn.addAlias(this.lambdaAliasName, {
-      provisionedConcurrentExecutions: 1
+      provisionedConcurrentExecutions: 1,
     });
 
     return alias;
