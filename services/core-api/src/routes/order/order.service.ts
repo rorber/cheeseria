@@ -5,11 +5,16 @@ import { readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import type { Uuid } from '../../util/util.types';
 import { AddCheeseToOrderRequest, Order, orderZod, ordersZod } from './order.types';
+import { safeGetEnvVar } from '@cheeseria/domain/src/utils/env';
 
 export class OrderService {
   addCheeseToOrder(body: AddCheeseToOrderRequest): Order {
     try {
-      const orders = ordersZod.parse(JSON.parse(readFileSync(join(__dirname, `orders.json`), `utf8`)));
+      const orders = ordersZod.parse(
+        JSON.parse(
+          readFileSync(join(safeGetEnvVar('STAGE', '') === `dev` ? `/tmp` : __dirname, `orders.json`), `utf8`),
+        ),
+      );
       const orderIndex = orders.findIndex((o) => o.id === body.orderId);
       if (orderIndex < 0) {
         throw new TRPCError({ code: `NOT_FOUND`, message: `Order with id ${body.orderId} not found` });
@@ -26,7 +31,10 @@ export class OrderService {
         });
       }
 
-      writeFileSync(join(__dirname, `orders.json`), JSON.stringify(orders));
+      writeFileSync(
+        join(safeGetEnvVar('STAGE', '') === `dev` ? `/tmp` : __dirname, `orders.json`),
+        JSON.stringify(orders),
+      );
       return order;
     } catch (error) {
       logger.info(`Failed to add cheese to order`, error);
@@ -41,10 +49,17 @@ export class OrderService {
         id: uuid(),
       };
 
-      const orders = ordersZod.parse(JSON.parse(readFileSync(join(__dirname, `orders.json`), `utf8`)));
+      const orders = ordersZod.parse(
+        JSON.parse(
+          readFileSync(join(safeGetEnvVar('STAGE', '') === `dev` ? `/tmp` : __dirname, `orders.json`), `utf8`),
+        ),
+      );
       orders.push(order);
 
-      writeFileSync(join(__dirname, `orders.json`), JSON.stringify(orders));
+      writeFileSync(
+        join(safeGetEnvVar('STAGE', '') === `dev` ? `/tmp` : __dirname, `orders.json`),
+        JSON.stringify(orders),
+      );
       return order;
     } catch (error) {
       logger.info(`Failed to create order`, error);
@@ -54,7 +69,11 @@ export class OrderService {
 
   deleteCheeseFromOrder(orderId: Uuid, cheeseId: Uuid): void {
     try {
-      const orders = ordersZod.parse(JSON.parse(readFileSync(join(__dirname, `orders.json`), `utf8`)));
+      const orders = ordersZod.parse(
+        JSON.parse(
+          readFileSync(join(safeGetEnvVar('STAGE', '') === `dev` ? `/tmp` : __dirname, `orders.json`), `utf8`),
+        ),
+      );
       const orderIndex = orders.findIndex((o) => o.id === orderId);
       if (orderIndex < 0) {
         throw new TRPCError({ code: `NOT_FOUND`, message: `Order with id ${orderId} not found` });
@@ -64,7 +83,10 @@ export class OrderService {
         id: orderId,
         cheeses: orders[orderIndex].cheeses.filter((c) => c.id !== cheeseId),
       };
-      writeFileSync(join(__dirname, `orders.json`), JSON.stringify(orders));
+      writeFileSync(
+        join(safeGetEnvVar('STAGE', '') === `dev` ? `/tmp` : __dirname, `orders.json`),
+        JSON.stringify(orders),
+      );
     } catch (error) {
       logger.info(`Failed to delete cheese from order`, error);
       throw new TRPCError({ code: `INTERNAL_SERVER_ERROR`, message: `Failed to delete cheese from order` });
@@ -73,7 +95,9 @@ export class OrderService {
 
   get(orderId: Uuid): Order {
     try {
-      const orders = JSON.parse(readFileSync(join(__dirname, `orders.json`), `utf8`));
+      const orders = JSON.parse(
+        readFileSync(join(safeGetEnvVar('STAGE', '') === `dev` ? `/tmp` : __dirname, `orders.json`), `utf8`),
+      );
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const order = orders.find((o: any) => o.id === orderId);
       if (!order) {

@@ -62,9 +62,8 @@ export class APIService extends Construct {
     // If this isn't here, it doesnt create a new version
     lambdaFn.currentVersion;
 
-    // TODO
     const alias = lambdaFn.addAlias(this.lambdaAliasName, {
-      /* provisionedConcurrentExecutions: 1 */
+      provisionedConcurrentExecutions: 1,
     });
 
     return alias;
