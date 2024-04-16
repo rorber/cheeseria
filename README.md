@@ -26,7 +26,8 @@ Following the steel thread methodology, my goal was getting something simple wor
 - adding integration testing to the API (Supertest)
 - adding E2E testing (Playwright)
 - adding the above testing to build pipelines
-- adding responsive design for various screen sizes, ensuring consistency across major browsers   
+- adding responsive design for various screen sizes, ensuring consistency across major browsers
+- Introduce Redux / other state layer to reduce duplicate api calls, improve inter-component data comms, simplify code
 - replacing json files with a proper persistence layer (e.g. Postgres DB) and abstracting interaction logic so the API services can call CRUD repository methods
 - creating more reusable UI components and add them to a new workspace so they can be shared between UI apps if/when required
 - adding error handling / boundaries to the UI
